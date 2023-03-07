@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 const appRouter = Router()
 
 appRouter.get('/healthcheck',(req : Request, res: Response)=>{
-	res.status(200).send('<h1>Server running and API is connected!%^</h1>')
+	res.status(200).send('<h1>Server running and API is connected! Now let\'s try the db!!! workin on it</h1>')
 })
 
 appRouter.use('*',(req : Request, res: Response)=>{

@@ -41,21 +41,28 @@ Let's break it down
 
 **THE JUICY SCRIPTS**
 
-`yarn dockerBuild` will build the docker image
+`yarn dockerBuild` will build the docker image -> you don't need this in this version of the starter
 
-`yarn devd` will run a new container on that same image. This is a complex script
+>`yarn devd` - this is also deprecated now, since the docker-compose command will build and start the container. The docker-compose file itself calls the `dev` command and watches for changes. The volumes is now defined in the compose file rather than the `devd`` command
 
-```
-    "devd": "docker run -p 5000:5000 -v $(pwd):/app -v /app/node_modules -d --name xtsd_template_container xunnux/xtsd_template_image && docker logs -f xtsd_template_container"
-```
-- it runs the container on port 5000 mapped to container port 5000
-- the `-v $(pwd):/app -v /app/node_modules` 
->The -v $(pwd):/app option mounts the current directory into the container, which allows nodemon to watch for changes to your code. The -v /app/node_modules option creates a volume for the node_modules directory so that it is not overwritten by the mounted volume.
+<br>
 
-- the next few optins are pretty straight forward, setting a name for the container and giving it the image to use. 
-- Finally, `&& docker logs -f \<container-name>` just executes another command after the container is running, in order to view the container logs in real time in the same terminal window
+------------
+<br>
 
+## PostgreSQL Notes
+
+Postgres is running in a separate docker container, using an official standard postgres image. The `docker-compose.yml` file contains the configuration for the database. Inspect it and change elements like the database username, password and dbname. Make sure to keep track of those changes and make them accordingly across the multiple services in the docker-compose file.
+
+>### Inspecting the DB with CLI
+><br>
+> Since we are running the db server on a container I'm not sure if we can inspect the db with some db browsing tool (maybe it is...)
 >
->**Note:**
-> If you get an error when trying to run the container, and the error says something like it can't find the image "and:latest" it might be an issue with a parent directory that has whitespace. This happened to me, and it was frustrating how long it took to figure out that that is what was causing the container to fail (with the -v flags, because without them it worked fine)
+>But I know we can run `psql` from the terminal within the container in order to browser it manually and manipulate it directly with the *CLI*
 >
+> The general command you need looks like this ` psql -h <ip_address_of_container> -p <port> -U "user" -d dbname`
+>
+>To find the ip address of the container, you can inspect the container `docker inspect <container_name_or_id>`
+> It will be in network settings -> HostIp
+>
+>In my specific case it looks like this ` psql -h 0.0.0.0 -p 5432 -U "myuser" -d mydb`
